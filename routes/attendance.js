@@ -54,7 +54,6 @@ router.get('/viewAsTeacher/:email/:date', async (req, res) => {
 router.post('/addAttendance', async (req, res) => {
     const attendanceData = req.body;
 
-    // Convert the timestamp in currentTime to a Date object
     attendanceData.currentTime = new Date(attendanceData.currentTime);
 
     try {

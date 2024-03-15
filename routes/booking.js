@@ -58,7 +58,6 @@ router.post('/bookRequest/:id', async (req, res) => {
         const requestData = req.body;
 
         const selectedDate = new Date(`${Object.keys(requestData.selectedDates)[0]}T00:00:00.000Z`);
-        const selectedDateUTC = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000);
 
         const selectedItems = requestData.selectedItems;
 
@@ -78,8 +77,8 @@ router.post('/bookRequest/:id', async (req, res) => {
 
         if (!conflicts) {
             const mergedBooking = selectedItems.reduce((merged, timeSlot) => {
-                const formattedStartTime = moment(`${selectedDateUTC.toISOString().split('T')[0]} ${timeSlot.start}`, 'YYYY-MM-DD h:mm A');
-                const formattedEndTime = moment(`${selectedDateUTC.toISOString().split('T')[0]} ${timeSlot.end}`, 'YYYY-MM-DD h:mm A');
+                const formattedStartTime = moment(`${selectedDate.toISOString().split('T')[0]} ${timeSlot.start}`, 'YYYY-MM-DD h:mm A');
+                const formattedEndTime = moment(`${selectedDate.toISOString().split('T')[0]} ${timeSlot.end}`, 'YYYY-MM-DD h:mm A');
 
                 let newStartTime, newEndTime;
 
