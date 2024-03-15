@@ -43,6 +43,7 @@ router.post('/likePost', async (req, res) => {
 
         const likedBy = post.likedBy || [];
 
+        let message;
         if (!likedBy.includes(user.email)) {
             await collection.updateOne(
                 { _id: new ObjectId(docId) },
@@ -51,7 +52,7 @@ router.post('/likePost', async (req, res) => {
                     $push: { likedBy: user.email },
                 }
             );
-            res.json({ message: 'Post liked successfully' });
+            message = 'Post liked successfully';
         } else {
             await collection.updateOne(
                 { _id: new ObjectId(docId) },
@@ -60,8 +61,13 @@ router.post('/likePost', async (req, res) => {
                     $pull: { likedBy: user.email },
                 }
             );
-            res.json({ message: 'Post unliked successfully' });
+            message = 'Post unliked successfully';
         }
+
+        // Retrieve the updated post data after the like operation
+        const updatedPost = await collection.findOne({ _id: new ObjectId(docId) });
+
+        res.json({ message, likedPost: updatedPost });
 
         client.close();
     } catch (error) {
@@ -69,5 +75,6 @@ router.post('/likePost', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 
 module.exports = router;
