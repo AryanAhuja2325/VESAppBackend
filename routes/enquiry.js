@@ -48,8 +48,21 @@ router.get('/fetchQuery', async (req, res) => {
     }
 });
 
+router.get('/fetchFeedback', async (req, res) => {
+    try {
+        const client = await connectToDatabase();
+        const database = client.db('database');
+        const collection = database.collection('Feedback');
+
+        const data = await collection.find({}).toArray();
+        res.json(data);
+    } catch (err) {
+        return handleErrors(res, err);
+    }
+});
+
 router.post('/feedback', async (req, res) => {
-    const { email, description } = req.body;
+    const { name, email, description } = req.body;
 
     if (!email || !description) {
         res.status(400).json({ error: 'Fields cannot be empty' });
@@ -62,6 +75,7 @@ router.post('/feedback', async (req, res) => {
         const collection = database.collection('Feedback');
 
         const feedback = {
+            Name: name,
             Email: email,
             Description: description
         };
