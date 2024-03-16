@@ -6,7 +6,7 @@ const { connectToDatabase, handleErrors } = require('../common');
 router.use(bodyParser.json());
 
 router.post('/query', async (req, res) => {
-    const { email, queryTypeToSend, description } = req.body;
+    const { name, email, queryTypeToSend, description } = req.body;
 
     if (!email || !queryTypeToSend || !description) {
         return res.status(400).json({ error: 'Fields cannot be empty' });
@@ -17,8 +17,9 @@ router.post('/query', async (req, res) => {
         const queryCollection = client.db('database').collection('Query');
 
         const query = {
+            Name: name,
             Email: email,
-            Type: queryTypeToSend,
+            Title: queryTypeToSend,
             Description: description,
         };
 
@@ -29,6 +30,19 @@ router.post('/query', async (req, res) => {
         } else {
             return res.status(500).json({ error: 'Query submission failed' });
         }
+    } catch (err) {
+        return handleErrors(res, err);
+    }
+});
+
+router.get('/fetchQuery', async (req, res) => {
+    try {
+        const client = await connectToDatabase();
+        const database = client.db('database');
+        const collection = database.collection('Query');
+
+        const data = await collection.find({}).toArray();
+        res.json(data);
     } catch (err) {
         return handleErrors(res, err);
     }
