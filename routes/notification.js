@@ -48,8 +48,8 @@ const insertNotification = async (notification) => {
         const mailOptions = {
             from: 'ahujaaryan2511@gmail.com',
             to: user.email,
-            subject: title,
-            text: `${desc} \n ${link}`,
+            subject: notification.title,
+            text: `${notification.desc} \n ${notification.link}`,
         };
 
         await transporter.sendMail(mailOptions);
