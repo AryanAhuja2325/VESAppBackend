@@ -7,12 +7,16 @@ router.get('/', async (req, res) => {
         const client = await connectToDatabase();
         const database = client.db("database");
         const collection = database.collection("EventUpdate");
-        const data = await collection.find({}).toArray();
-        res.json(data);
+
+        const currentDate = new Date();
+        const activeEvents = await collection.find({ Eventdate: { $gt: currentDate } }).toArray();
+
+        res.json(activeEvents);
     } catch (error) {
         handleErrors(res, error);
     }
 });
+
 
 router.post('/addEvent', async (req, res) => {
     const { Title, Desc, Image, Eventdate } = req.body;
@@ -51,10 +55,9 @@ router.get('/completed', async (req, res) => {
         const collection = database.collection("EventUpdate");
 
         const currentDate = new Date();
+        const completedEvents = await collection.find({ Eventdate: { $lte: currentDate } }).toArray();
 
-        const data = await collection.find({ Eventdate: { $lte: currentDate } }).toArray();
-
-        res.json(data);
+        res.json(completedEvents);
     } catch (error) {
         handleErrors(res, error);
     }
